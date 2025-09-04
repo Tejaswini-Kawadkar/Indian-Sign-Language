@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hearing Impairment Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</head>
+<body>
+    <h1>Hearing Impairment Assistant</h1>
+    <img src="{{ url_for('static', filename='signlang.png') }}" alt="Sign Language" />
+
+    <div class="input-section">
+        <h2>Enter your text</h2>
+        <form id="text-form">
+            <input type="text" id="text-input" placeholder="Type your text here...">
+            <button type="submit">Submit Text</button>
+        </form>
+    </div>
+    
+    <div id="video-container">
+        <h2>Video Output</h2>
+        <video id="video-player" controls></video>
+    </div>
+    
+    <script>
+        function playVideo(videoPaths) {
+            let videoPlayer = document.getElementById('video-player');
+            let index = 0;
+    
+            function playNextVideo() {
+                if (index < videoPaths.length) {
+                    if (videoPaths[index] === 'pause') {
+                        // If it's a pause (space), wait for 5 seconds before playing the next video
+                        setTimeout(() => {
+                            index++;
+                            playNextVideo();
+                        }, 5000);  // 5-second gap
+                    } else {
+                        // Play the video
+                        videoPlayer.src = '/video/' + videoPaths[index].split('/').pop();  // Extract filename
+                        videoPlayer.play();
+                        videoPlayer.onended = function () {
+                            index++;
+                            playNextVideo();
+                        };
+                    }
+                } else {
+                    // Optionally reset the index after all videos have been played
+                    index = 0; // Reset for future plays, if needed
+                }
+            }
+    
+            playNextVideo();  // Start playing the first video
+        }
+    
+        document.getElementById('text-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            let inputText = document.getElementById('text-input').value;
+            fetch('/text_input', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'input_text=' + encodeURIComponent(inputText),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.videos) {
+                    playVideo(data.videos);  // Play all videos in sequence
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            });
+        });
+    
+        document.getElementById('audio-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            let audioInput = document.getElementById('audio-input').files[0];
+            let formData = new FormData();
+            formData.append('audio', audioInput);
+    
+            fetch('/audio_input', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.videos) {
+                    playVideo(data.videos);  // Play all videos in sequence
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            });
+        });
+    </script>
