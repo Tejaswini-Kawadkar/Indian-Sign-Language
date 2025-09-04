@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    background: url('BG2.png') no-repeat center center fixed; /* Full-page background */
+    background-size: cover;
+    /* background-size: 100% 100%; */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    height: 100%; /* Full height of the viewport */
+    text-align: center; /* Center text */
+    color: rgb(0, 0, 0); /* Change text color for better visibility */
+}
+
+h1 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons horizontally */
+}
+
+button {
+    width: 200px; /* Set a fixed width for buttons */
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 1); /* Fully opaque on hover */
+}
